@@ -29,7 +29,7 @@ class ChatHandler{
     }
 
     getRandomColor(){
-        var colors = ["F44336", "E53935", "D32F2F", "C62828", "B71C1C", "E91E63", "D81B60", "C2185B", "AD1457", "880E4F", "6A1B9A", "4A148C", "673AB7", "5E35B1", "512DA8", "4527A0", "311B92", "3F51B5", "3949AB", "303F9F", "283593", "1A237E", "2196F3", "1E88E5", "1976D2", "1565C0", "0D47A1", "43A047", "388E3C", "2E7D32", "1B5E20", "FF5722", "F4511E", "E64A19", "D84315", "BF360C"];
+        var colors = ["F44336", "E53935", "D32F2F", "C62828", "B71C1C", "E91E63", "D81B60", "C2185B", "AD1457", "880E4F", "6A1B9A", "4A148C", "673AB7", "5E35B1", "512DA8", "4527A0", "311B92", "3F51B5", "3949AB", "303F9F", "283593", "1A237E", "2196F3", "1E88E5", "1976D2", "1565C0", "0D47A1", "43A047", "388E3C", "2E7D32", "1B5E20", "FF5722", "F4511E", "E64A19", "D84315", "BF360C", "EF6C00", "E65100", "FF5722", "BF360C", "795548", "3E2723", "212121", "757575", "607D8B", "263238", "33691E", "689F38", "827717", "004D40"];
         var randomColor = colors[Math.floor(Math.random()*colors.length)];
         return `#${randomColor}`;
     }
@@ -58,8 +58,17 @@ class ChatHandler{
         socket.on('chat', (message)=>{
             message.text = message.text.trim();
             if(message.text.length > 1000){
-                message.text = message.text.substring(0, 1000);
+                message.text      = message.text.substring(0, 1000);
+                message.truncated = true;
             }
+
+            message.text = message.text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+            var links = message.text.match(/(http|https|ftp|ftps)\:\/\/([a-zA-Z0-9\-\.]+)\.([a-zA-Z]{2,3}(\/\S*)?)/);
+            if(links){
+                message.text = message.text.replace(links[0], `<a href="${links[0]}" target="_blank">${links[0]}</a>`);
+            }
+
             log.info(message.text, `MESSAGE`);
             this.newMessage(socket, message);
         });
