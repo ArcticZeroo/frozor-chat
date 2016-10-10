@@ -1,0 +1,135 @@
+/** { margin: 0; padding: 0; box-sizing: border-box; }
+body { font: 12px Roboto; }
+form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+form button { width: 9%; background: #2196F3; border: none; padding: 8px; }
+#messages { list-style-type: none; margin: 0; padding: 0; }
+#messages li { padding: 5px 10px; }
+#messages li:nth-child(odd) { background: #eee; }*/
+
+*{
+    font-family: Roboto, SansSerif;
+    margin: 0;
+    padding: 0;
+}
+
+html{
+    background-color: #FAFAFA;
+    display: flex;
+    justify-content: center;
+}
+
+form{
+    width: 100%;
+    /*position: fixed;
+    bottom: 0;*/
+}
+
+button{
+    background: none;
+    border: none;
+    color: #009688;
+}
+
+button:focus{
+    outline: none;
+}
+
+body{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-content: space-between;
+}
+
+#message-box{
+    overflow: scroll;
+}
+
+#messages {
+    list-style-type: none;
+    padding-left: 32px;
+    padding-right: 32px;
+    height: 100%;
+}
+
+.chat-box{
+    margin: 8px;
+    display: flex;
+    align-items: center;
+    -webkit-box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.5);
+    -moz-box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.5);
+    box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.5);
+    height: 32px;
+    -webkit-border-radius: 16px 16px;
+    -moz-border-radius: 16px 16px;
+    border-radius: 16px 16px;
+}
+
+#center{
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+#chat{
+    width: 100%;
+    height: 32px;
+    outline: none;
+    border: none;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+#left-round{
+    background: white;
+    height: 100%;
+    width: 32px;
+    border-bottom-left-radius: 100% 32px;
+    border-top-left-radius: 100% 32px;
+}
+
+#right-round{
+    background: white;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 32px;
+    border-bottom-right-radius: 100% 32px;
+    border-top-right-radius: 100% 32px;
+}
+i.material-icons{
+    cursor: pointer;
+    padding: 4px;
+}
+
+.message{
+    margin: 4px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.inactive{
+    opacity: 0;
+}
+
+.chat-message{
+    height: 100%;
+    padding: 8px;
+    color: white;
+}
+
+.me{
+    text-align: right;
+    background-color: #009688;
+    color: white;
+    padding: 8px;
+    border-radius: 16px 16px;
+}
+
+.not-me{
+    background-color: #673AB7;
+    padding: 8px;
+    border-radius: 16px 16px;
+}
