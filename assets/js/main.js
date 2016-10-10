@@ -1,7 +1,16 @@
 var user;
 
+function connected(){
+    $('.disconnected').hide();
+}
+
+function disconnected(){
+    $('.disconnected').html('Having trouble connecting to the server... <a href="/">Reload?</a>');
+    $('.disconnected').show();
+}
+
 function goToBottom(){
-    $(window).scrollTop($(document).height());
+    $('html, body').animate({scrollTop: $('#message-box').height()}, 5);
 }
 
 function handleMessage(message){
@@ -24,17 +33,17 @@ function handleMessage(message){
             </div>
         </li>`)
     }
-    $('.chat-message').click(function(message){
-        var ts = new Date(parseInt($(message).data('ts')));
-        console.log(ts.toLocaleDateString());
-        console.log(ts.toLocaleTimeString());
-    })
+}
+
+function showMenu(){
+    $('#menu').show();
 }
 
 $(document).ready(function () {
     var socket = io();
 
     socket.on('user', function(id){
+        connected();
         var userCookie = Cookies.get('user');
         if(userCookie){
             user = userCookie;
@@ -47,7 +56,10 @@ $(document).ready(function () {
         Cookies.set('user', id);
     });
 
+    var givenHistory = false;
     socket.on('history', function(history){
+        if(givenHistory) return;
+        givenHistory = true;
         history.forEach(function(message){
             handleMessage(message);
             goToBottom();
@@ -56,16 +68,21 @@ $(document).ready(function () {
 
     socket.on('chat', function(message){
         handleMessage(message);
+        goToBottom();
     });
 
     socket.on('users', function(count){
         console.log(`There are ${count} users online.`);
+        $('.users').html(`${count} Online`);
     });
 
+    socket.on('disconnect', disconnected);
 
-    $('form').submit(function(event){
+    $('form').submit(function(event) {
         event.preventDefault();
+    });
 
+    $('.chat-form').submit(function(){
         var message = $('#chat').val();
         if(message.trim() == '') return;
 
@@ -73,7 +90,7 @@ $(document).ready(function () {
             user: user,
             text: message,
             ts: Date.now()
-        }
+        };
 
         socket.emit('chat', data);
         $('#chat').val(' ');

@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Chat</title>
+    <meta id="meta" name="viewport"
+          content="width=device-width; initial-scale=1.0" />
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,500" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="css/index.css"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -12,20 +14,44 @@
     <script src="/js/main.js"></script>
 </head>
 <body>
+    <div class="header">
+        <div class="before"></div>
+
+        <div class="content">
+            <div class="title">
+                Frozor Chat
+            </div>
+            <div class="users"></div>
+            <div class="disconnected" style="display: none;"></div>
+        </div>
+
+        <div class="after">
+            <button id="settings">
+                <i class="material-icons">settings</i>
+            </button>
+        </div>
+    </div>
+    <div id="menu" style="display: none;">
+        <div class="title">Settings</div>
+        <form class="settings" action="" autocomplete="off">
+
+        </form>
+    </div>
     <div id="message-box">
         <ul id="messages">
         </ul>
     </div>
-    <span href="#bottom"></span>
-    <form action="">
+    <form action="" autocomplete="off" class="chat-form">
         <div class="chat-box">
-            <div id="left-round"></div>
+            <span class="left">
+
+            </span>
             <div id="center">
                 <input type="text" id="chat"/>
             </div>
-            <div id="right-round">
+            <span class="right">
                 <button><i class="material-icons">send</i></button>
-            </div>
+            </span>
         </div>
     </form>
 </body>

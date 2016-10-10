@@ -16,13 +16,22 @@ form button { width: 9%; background: #2196F3; border: none; padding: 8px; }
 html{
     background-color: #FAFAFA;
     display: flex;
+    align-items: center;
     justify-content: center;
 }
 
-form{
+body{
     width: 100%;
-    /*position: fixed;
-    bottom: 0;*/
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+}
+
+.chat-form{
+    width: 100%;
+    position: fixed;
+    bottom: 0;
 }
 
 button{
@@ -35,35 +44,31 @@ button:focus{
     outline: none;
 }
 
-body{
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-content: space-between;
-}
-
 #message-box{
-    overflow: scroll;
+    height: 100%;
+    overflow: hidden;
+    padding-bottom: 48px;
+    padding-top: 48px;
 }
 
 #messages {
     list-style-type: none;
-    padding-left: 32px;
-    padding-right: 32px;
     height: 100%;
+    padding: 16px;
 }
 
 .chat-box{
     margin: 8px;
     display: flex;
     align-items: center;
+    background: white;
     -webkit-box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.5);
     -moz-box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.5);
     box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.5);
-    height: 32px;
-    -webkit-border-radius: 16px 16px;
-    -moz-border-radius: 16px 16px;
-    border-radius: 16px 16px;
+    height: 48px;
+    -webkit-border-radius: 24px 24px;
+    -moz-border-radius: 24px 24px;
+    border-radius: 24px 24px;
 }
 
 #center{
@@ -94,18 +99,18 @@ body{
     display: flex;
     align-items: center;
     height: 100%;
+    height: 32px;
     width: 32px;
     border-bottom-right-radius: 100% 32px;
     border-top-right-radius: 100% 32px;
 }
 i.material-icons{
     cursor: pointer;
-    padding: 4px;
+    padding: 8px;
 }
 
 .message{
     margin: 4px;
-    width: 100%;
     display: flex;
     justify-content: space-between;
 }
@@ -125,11 +130,70 @@ i.material-icons{
     background-color: #009688;
     color: white;
     padding: 8px;
-    border-radius: 16px 16px;
+    border-radius: 28px 28px;
 }
 
 .not-me{
     background-color: #673AB7;
     padding: 8px;
-    border-radius: 16px 16px;
+    border-radius: 28px 28px;
+}
+
+.left, .right{
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+}
+
+a{
+    color: white;
+}
+
+#menu{
+    position: absolute;
+    background: black;
+}
+
+.header{
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.75);
+    -webkit-box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.5);
+    -moz-box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.5);
+    box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.5);
+    display: flex;
+    align-content: center;
+    justify-content: space-between;
+}
+.header .title{
+    font-size: 1.1em;
+    text-align: center;
+}
+
+.header .content{
+    display: flex;
+    text-align: center;
+    align-content: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.header .users{
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.header .after{
+    height: 64px;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+}
+
+.header .after i.material-icons{
+    color: black;
+    padding: 14px;
 }
