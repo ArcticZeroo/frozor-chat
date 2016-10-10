@@ -13,10 +13,14 @@ app.get('/', (req, res)=>{
     res.sendFile(`${__dirname}/assets/html/index.html`);
 });
 
+app.get('/chat', (req, res)=>{
+    res.sendFile(`${__dirname}/assets/html/index.html`);
+});
+
 io.on('connection', (socket)=>{
     chat.newUser(socket);
 });
 
-http.listen(80, ()=>{
+http.listen(3000, ()=>{
     log.info(`Listening on port ${log.chalk.cyan('80')}!`, "HTTP")
 });
