@@ -1,4 +1,6 @@
 var user;
+var socket;
+var settings;
 
 function connected(){
     $('.disconnected').hide();
@@ -35,12 +37,28 @@ function handleMessage(message){
     }
 }
 
-function showMenu(){
-    $('#menu').show();
+var menu_opened = false;
+function openMenu(){
+    $('#menu').fadeIn('fast');
+    //$('.cover').fadeIn('fast');
+
+    menu_opened = true;
+}
+function closeMenu(){
+    $('#menu').fadeOut('fast');
+    //$('.cover').fadeOut('fast');
+    menu_opened = false;
+}
+
+function toggleMenu(){
+    if(menu_opened) closeMenu();
+    else            openMenu();
 }
 
 $(document).ready(function () {
-    var socket = io();
+    closeMenu();
+
+    socket = io();
 
     socket.on('user', function(id){
         connected();
@@ -77,6 +95,10 @@ $(document).ready(function () {
     });
 
     socket.on('disconnect', disconnected);
+
+    $('#settings').click(function(){
+        toggleMenu();
+    });
 
     $('form').submit(function(event) {
         event.preventDefault();

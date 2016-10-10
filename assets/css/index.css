@@ -151,9 +151,61 @@ a{
     color: white;
 }
 
+.cover{
+    position: fixed;
+    background: rgba(0, 0, 0, 0.25);
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 2;
+}
+
 #menu{
-    position: absolute;
-    background: black;
+    position: fixed;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+}
+
+#menu .content{
+    background: white;
+    -webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.25);
+    -moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.25);
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.25);
+}
+
+#menu .card .top{
+    padding: 24px;
+}
+
+#menu .card .bottom{
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 24px;
+    height: 52px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+#menu button{
+    text-transform: uppercase;
+    color: #2196F3;
+    min-width: 64px;
+    padding-left: 8px;
+    padding-right: 8px;
+    font-size: 1em;
+    font-family:Roboto;
+    cursor: pointer;
 }
 
 .header{
@@ -168,6 +220,7 @@ a{
     display: flex;
     align-content: center;
     justify-content: space-between;
+    z-index: 4;
 }
 .header .title{
     font-size: 1.1em;
