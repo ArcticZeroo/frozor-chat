@@ -96,12 +96,34 @@ $(document).ready(function () {
 
     socket.on('disconnect', disconnected);
 
+    $('#cancel').click(function () {
+        closeMenu();
+    });
+
     $('#settings').click(function(){
         toggleMenu();
     });
 
     $('form').submit(function(event) {
         event.preventDefault();
+    });
+
+    $('.settings').submit(function () {
+        closeMenu();
+
+        var nickname = $('#nickname');
+        var color    = $('#color');
+
+        if(nickname.val().trim() != ''){
+
+        }
+
+        if(color.val().trim() != ''){
+
+        }
+
+        nickname.val('');
+        color.val('');
     });
 
     $('.chat-form').submit(function(){

@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Frozor Chat</title>
-    <meta id="meta" name="viewport"
-          content="width=device-width; initial-scale=1.0" />
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500" rel="stylesheet">
+    <meta id="meta" name="viewport" content="width=device-width; initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="css/index.css"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
@@ -18,22 +17,23 @@
     <div class="content">
         <div class="card">
             <form class="settings" action="" autocomplete="off">
-            <div class="top">
-                <div class="title">Settings (WIP)</div>
-                <div class="body">
-                        <div class="group">
-                            <label for="username">Username</label>
-                            <input id="username" type="text"/>
-                        </div>
-                        <div class="group">
-                            <label for="color">Color</label>
-                            <input id="color" type="color"/>
-                        </div>
+                <div class="top">
+                    <div class="title">Settings (WIP)</div>
+                    <div class="body">
+                            <div class="group">
+                                <label for="nickname">Nickname</label>
+                                <input id="nickname" type="text"/>
+                            </div>
+                            <div class="group">
+                                <label for="color">Color</label>
+                                <input id="color" type="text"/>
+                            </div>
+                    </div>
                 </div>
-            </div>
-            <div class="bottom">
-                <button id="save">Save</button>
-            </div>
+                <div class="bottom">
+                    <button id="cancel">Cancel</button>
+                    <button id="save">Save</button>
+                </div>
             </form>
         </div>
     </div>
@@ -41,7 +41,11 @@
 
 <body>
     <div class="header">
-        <div class="before"></div>
+        <div class="before">
+            <button id="refresh">
+                <i class="material-icons">refresh</i>
+            </button>
+        </div>
 
         <div class="content">
             <div class="title">
