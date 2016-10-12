@@ -1,4 +1,9 @@
-var log = require('frozor-logger');
+var log            = require('frozor-logger');
+var RunCommand     = require('frozor-commands').RunCommand;
+var CommandMessage = require('./lib/CommandMessage');
+var Error          = require('frozor-error');
+var chatCommands   = require('./lib/commands/chat');
+
 class ChatHandler{
     constructor(io){
         this.io = io;
@@ -11,13 +16,53 @@ class ChatHandler{
         return this._users[id];
     }
 
-    getMessageColor(socket){
-        if(!this._users[socket.id]) return "#673AB7";
-        return this._users[socket.id].color;
+    getMessageColor(id){
+        if(!this.getUser(id)) this.createUser(id);
+        return this.getUser(id).color;
     }
 
     newMessage(socket, data){
-        data.color = this.getMessageColor(socket);
+        data.color = this.getMessageColor(socket.id);
+
+        if(this.getUsername(socket.id)) data.username = this.getUsername(socket.id);
+
+        if(data.text.startsWith('/') && data.text.length > 1){
+            var commandMessage = new CommandMessage(data);
+            RunCommand.check(commandMessage, chatCommands, (command, err)=>{
+                if(err){
+                    log.command(`${commandMessage.getUsernameString()}@${commandMessage.getUser()}`, commandMessage.getText(), 'Chat', false);
+                    switch(err){
+                        case Error.COMMAND_UNDEFINED:
+                            log.debug(`Undefined command entered.`);
+                            break;
+                        case Error.COMMAND_TOO_MANY_ARGS:
+                            commandMessage.sendAutoReply(socket, `Too many arguments! That command has a maximum of ${command.getMax()}`);
+                            break;
+                        case Error.COMMAND_NOT_ENOUGH_ARGS:
+                            commandMessage.sendAutoReply(socket, `Not enough arguments! That command has a minimum of ${command.getMin()}`);
+                            break;
+                        case Error.COMMAND_DISABLED:
+                            commandMessage.sendAutoReply(socket, `That command is currently disabled.`);
+                            break;
+                        default:
+                            commandMessage.sendAutoReply(socket, `An unknown error has occurred. Please try again later.`);
+                    }
+                    return;
+                }
+
+                var process = command.getProcess();
+
+                try{
+                    log.command(`${commandMessage.getUsernameString()}@${commandMessage.getUser()}`, commandMessage.getText(), 'Chat', true);
+                    process(socket, commandMessage);
+                }catch(e){
+                    commandMessage.sendAutoReply(socket, `Unable to process command, please try again later.`);
+                    log.error(`An error occurred while attempting to execute the command ${log.chalk.red(commandMessage.getName())}: ${e}`);
+                }
+            })
+            return;
+        }
+
         this.io.emit('chat', data);
 
         if(this.getHistory().length == 100) this._history.splice(0, 1);
@@ -34,13 +79,35 @@ class ChatHandler{
         return `#${randomColor}`;
     }
 
-    newUser(socket){
-        this._users[socket.id] = {
-            id       : socket.id,
-            username : "",
+    getUsername(id){
+        if(!this.getUser(id)) this.createUser(id);
+
+        return this.getUser(id).username;
+    }
+
+    setUsername(id, name){
+        if(!this.getUser(id)) this.createUser(id);
+
+        this._users[id].username = name;
+    }
+
+    setColor(id, color){
+        if(!this.getUser(id)) this.createUser(id);
+
+        this._users[id].color = color;
+    }
+
+    createUser(id){
+        this._users[id] = {
+            id       : id,
+            username : null,
             color    : this.getRandomColor(),
             connected: Date.now()
-        }
+        };
+    }
+
+    newUser(socket){
+        this.createUser(socket.id);
 
         this._connected++;
         this.io.emit('users', this._connected);
@@ -52,7 +119,11 @@ class ChatHandler{
         socket.emit('history', this.getHistory());
 
         socket.on('cookie', (old_id)=>{
-            this._users[socket.id] = this.getUser(old_id);
+            log.debug('Someone with an old cookie conneted! Remaking their user...');
+            this.createUser(socket.id);
+            this._users[socket.id].id = old_id;
+            this.setUsername(socket.id, this.getUsername(old_id));
+            this.setColor(socket.id, this.getMessageColor(old_id));
         });
 
         socket.on('chat', (message)=>{
@@ -76,6 +147,23 @@ class ChatHandler{
         socket.on('disconnect', ()=>{
             this._connected--;
             this.io.emit('users', this._connected);
+        });
+
+        socket.on('color', (color)=>{
+            log.debug(`Received a new color event, ${color}`);
+
+            var isValid = /^[#]?[0-9A-f]{6}$/.test(color);
+            if(!isValid) return;
+
+            color = `#${color.replace('#', '')}`;
+
+            this.setColor(socket.id, color);
+        });
+
+        socket.on('username', (name)=>{
+            if(name.length > 16) return;
+
+            this.setUsername(socket.id, name);
         });
     }
 }

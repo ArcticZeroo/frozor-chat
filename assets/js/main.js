@@ -1,5 +1,4 @@
 var user;
-var socket;
 var settings;
 
 function connected(){
@@ -7,31 +6,42 @@ function connected(){
 }
 
 function disconnected(){
-    $('.disconnected').html('Having trouble connecting to the server... <a href="/">Reload?</a>');
-    $('.disconnected').show();
+    $('.disconnected').html('Having trouble connecting to the server... <a href="/">Reload?</a>').show();
 }
 
 function goToBottom(){
     $('html, body').animate({scrollTop: $('#message-box').height()}, 5);
 }
 
+function getUsernameString(message){
+    return (message.username) ? message.username : '';
+}
+
 function handleMessage(message){
     if(message.user == user){
         $('#messages').append(`<li class="message">
-            <div class="chat-message">
+            <div class="chat-message" class="other">
                 <div class="not-me inactive"></div>
+                <div class="name inactive"></div>
             </div>
             <div class="chat-message">
-                <div class="me" style="background-color: ${message.color};" data-ts="${message.ts}">${message.text}</div>
+                <div class="content">
+                    <div class="me" style="background-color: ${message.color};" data-ts="${message.ts}">${message.text}</div>
+                </div>
+                <div class="name">${getUsernameString(message)}</div>
             </div>
         </li>`);
     }else{
         $('#messages').append(`<li class="message">
-            <div class="chat-message">
-                <div class="not-me" style="background-color: ${message.color};" data-ts="${message.ts}">${message.text}</div>
+            <div class="chat-message" class="other">
+                <div class="content">
+                    <div class="not-me" style="background-color: ${message.color};" data-ts="${message.ts}">${message.text}</div>
+                </div>
+                <div class="name">${getUsernameString(message)}</div>
             </div>
             <div class="chat-message">
                 <div class="me inactive"></div>
+                <div class="name inactive"></div>
             </div>
         </li>`)
     }
@@ -41,6 +51,7 @@ var menu_opened = false;
 function openMenu(){
     $('#menu').fadeIn('fast');
     //$('.cover').fadeIn('fast');
+    $('.error').html('');
 
     menu_opened = true;
 }
@@ -58,12 +69,13 @@ function toggleMenu(){
 $(document).ready(function () {
     closeMenu();
 
-    socket = io();
+    var socket = io();
 
     socket.on('user', function(id){
         connected();
         var userCookie = Cookies.get('user');
         if(userCookie){
+            console.log('Emitting cookie');
             user = userCookie;
             socket.emit('cookie', userCookie);
             return;
@@ -109,25 +121,37 @@ $(document).ready(function () {
     });
 
     $('.settings').submit(function () {
-        closeMenu();
-
         var nickname = $('#nickname');
         var color    = $('#color');
 
         if(nickname.val().trim() != ''){
-
+            if(nickname.val().length > 16){
+                $('.error.name').html('Too long. Maximum 16 characters.');
+                return;
+            }
+            socket.emit('username', nickname.val());
+            nickname.val('');
         }
 
         if(color.val().trim() != ''){
-
+            var inputColor = color.val();
+            inputColor = inputColor.replace('#', '');
+            var isValid = /^[#]?[0-9A-f]{6}$/.test(inputColor);
+            if(!isValid){
+                $('.error.hex').html('Invalid color.');
+                return;
+            }else{
+                socket.emit('color', inputColor);
+                color.val('');
+            }
         }
 
-        nickname.val('');
-        color.val('');
+        closeMenu();
     });
 
     $('.chat-form').submit(function(){
-        var message = $('#chat').val();
+        var chat    = $('#chat');
+        var message = chat.val();
         if(message.trim() == '') return;
 
         var data = {
@@ -137,7 +161,7 @@ $(document).ready(function () {
         };
 
         socket.emit('chat', data);
-        $('#chat').val(' ');
+        chat.val(' ');
         goToBottom();
     });
 })

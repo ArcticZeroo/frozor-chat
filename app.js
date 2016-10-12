@@ -21,6 +21,6 @@ io.on('connection', (socket)=>{
     chat.newUser(socket);
 });
 
-http.listen(3000, ()=>{
+http.listen(80, ()=>{
     log.info(`Listening on port ${log.chalk.cyan('80')}!`, "HTTP")
 });

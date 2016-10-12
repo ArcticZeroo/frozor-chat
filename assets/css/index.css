@@ -123,6 +123,30 @@ i.material-icons{
     height: 100%;
     padding: 8px;
     color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-message .content{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.chat-message .other{
+    justify-content: flex-start;
+}
+
+.chat-message .me, .chat-message .not-me{
+    display: table-cell;
+}
+
+.chat-message .name{
+    color: #BDBDBD;
+    text-align: right;
+}
+
+.chat-message .other .name{
+    text-align: left;
 }
 
 .me{
@@ -137,6 +161,10 @@ i.material-icons{
     background-color: #673AB7;
     padding: 8px;
     border-radius: 28px 28px;
+}
+
+.not-me ~ .name{
+    text-align: left;
 }
 
 .left, .right{
