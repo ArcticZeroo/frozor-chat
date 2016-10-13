@@ -19,23 +19,26 @@ function getUsernameString(message){
 
 function handleMessage(message){
     if(message.user == user){
+        // OWN MESSAGES
         $('#messages').append(`<li class="message">
-            <div class="chat-message" class="other">
+            <div class="chat-message">
                 <div class="not-me inactive"></div>
                 <div class="name inactive"></div>
             </div>
-            <div class="chat-message">
+            <div class="chat-message end">
                 <div class="content">
-                    <div class="me" style="background-color: ${message.color};" data-ts="${message.ts}">${message.text}</div>
+                    <div class="me message" style="background-color: ${message.color};" data-ts="${message.ts}">${message.text}</div>
                 </div>
                 <div class="name">${getUsernameString(message)}</div>
             </div>
         </li>`);
+        // OWN MESSAGES END
     }else{
+        // OTHERS' MESSAGES
         $('#messages').append(`<li class="message">
-            <div class="chat-message" class="other">
+            <div class="chat-message">
                 <div class="content">
-                    <div class="not-me" style="background-color: ${message.color};" data-ts="${message.ts}">${message.text}</div>
+                    <div class="not-me message" style="background-color: ${message.color};" data-ts="${message.ts}">${message.text}</div>
                 </div>
                 <div class="name">${getUsernameString(message)}</div>
             </div>
@@ -44,6 +47,7 @@ function handleMessage(message){
                 <div class="name inactive"></div>
             </div>
         </li>`)
+        // OTHERS' MESSAGES END
     }
 }
 
@@ -92,8 +96,10 @@ $(document).ready(function () {
         givenHistory = true;
         history.forEach(function(message){
             handleMessage(message);
-            goToBottom();
         });
+        goToBottom();
+
+
     });
 
     socket.on('chat', function(message){
@@ -122,29 +128,20 @@ $(document).ready(function () {
 
     $('.settings').submit(function () {
         var nickname = $('#nickname');
-        var color    = $('#color');
+        var color    = $('input[name="color"]:checked');
 
         if(nickname.val().trim() != ''){
             if(nickname.val().length > 16){
                 $('.error.name').html('Too long. Maximum 16 characters.');
                 return;
             }
+            console.log('Emitting name change!');
             socket.emit('username', nickname.val());
             nickname.val('');
         }
 
-        if(color.val().trim() != ''){
-            var inputColor = color.val();
-            inputColor = inputColor.replace('#', '');
-            var isValid = /^[#]?[0-9A-f]{6}$/.test(inputColor);
-            if(!isValid){
-                $('.error.hex').html('Invalid color.');
-                return;
-            }else{
-                socket.emit('color', inputColor);
-                color.val('');
-            }
-        }
+        console.log('Emitting color change!');
+        socket.emit('color', color.val());
 
         closeMenu();
     });

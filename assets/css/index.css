@@ -127,13 +127,14 @@ i.material-icons{
     flex-direction: column;
 }
 
-.chat-message .content{
-    display: flex;
-    justify-content: flex-end;
+.chat-message .content .message{
+    border-radius: 16px 16px;
 }
 
-.chat-message .other{
-    justify-content: flex-start;
+.chat-message.end{
+    display: flex;
+    align-items: flex-end;
+    text-align: right;
 }
 
 .chat-message .me, .chat-message .not-me{
@@ -141,8 +142,12 @@ i.material-icons{
 }
 
 .chat-message .name{
-    color: #BDBDBD;
-    text-align: right;
+    padding-top: 4px;
+    color: #212121;
+}
+
+.name i{
+    color: rgba(0, 0, 0, 0.5);
 }
 
 .chat-message .other .name{
@@ -154,13 +159,11 @@ i.material-icons{
     background-color: #009688;
     color: white;
     padding: 8px;
-    border-radius: 28px 28px;
 }
 
 .not-me{
     background-color: #673AB7;
     padding: 8px;
-    border-radius: 28px 28px;
 }
 
 .not-me ~ .name{
@@ -168,9 +171,10 @@ i.material-icons{
 }
 
 .left, .right{
-    width: 32px;
-    height: 32px;
+    width: 48px;
+    height: 48px;
     display: flex;
+    flex-direction: column;
     align-content: center;
     justify-content: center;
 }
@@ -205,13 +209,15 @@ a{
     z-index: 3;
 }
 
-#menu .content{
-    background: white;
-    -webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.25);
-    -moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.25);
-    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.25);
+.card{
+    background-color: white;
+    -webkit-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.25);
+    -moz-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.25);
+    box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.25);
+    margin: 8px;
 }
 
+/*
 #menu .card .top{
     padding: 24px;
 }
@@ -241,6 +247,12 @@ a{
     padding-bottom: 8px;
     outline: none;
     background: none;
+    transition-property: border-bottom;
+    transition-duration: .25s;
+}
+
+#menu .card .top input[type=text]:focus{
+    border-bottom: 1px solid #2196F3;
 }
 
 #menu .card .top input[type=color]{
@@ -263,9 +275,9 @@ a{
     padding-bottom: 16px;
 }
 
-#menu .group label.active{
+input:focus ~ label{
     color: #2196F3;
-}
+}*/
 
 .header{
     position: fixed;
@@ -298,15 +310,18 @@ a{
     color: rgba(0, 0, 0, 0.5);
 }
 
-.header .after{
+.header .after, .header .before{
     height: 64px;
     display: flex;
     align-content: center;
     justify-content: center;
 }
 
-.header .after i.material-icons{
+.header .after i.material-icons, .header .before i.material-icons{
     color: black;
     padding: 14px;
 }
 
+.disconnected a{
+    color: #212121;
+}

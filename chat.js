@@ -33,7 +33,7 @@ class ChatHandler{
                     log.command(`${commandMessage.getUsernameString()}@${commandMessage.getUser()}`, commandMessage.getText(), 'Chat', false);
                     switch(err){
                         case Error.COMMAND_UNDEFINED:
-                            log.debug(`Undefined command entered.`);
+                            commandMessage.sendAutoReply(socket, 'Unknown command. Type /help for a list of commands.');
                             break;
                         case Error.COMMAND_TOO_MANY_ARGS:
                             commandMessage.sendAutoReply(socket, `Too many arguments! That command has a maximum of ${command.getMax()}`);
@@ -54,7 +54,7 @@ class ChatHandler{
 
                 try{
                     log.command(`${commandMessage.getUsernameString()}@${commandMessage.getUser()}`, commandMessage.getText(), 'Chat', true);
-                    process(socket, commandMessage);
+                    process(socket, commandMessage, this.io);
                 }catch(e){
                     commandMessage.sendAutoReply(socket, `Unable to process command, please try again later.`);
                     log.error(`An error occurred while attempting to execute the command ${log.chalk.red(commandMessage.getName())}: ${e}`);

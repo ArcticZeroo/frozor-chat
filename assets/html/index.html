@@ -6,35 +6,78 @@
     <meta id="meta" name="viewport" content="width=device-width; initial-scale=1.0" />
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="css/index.css"/>
+    <link type="text/css" rel="stylesheet" href="css/settings.css"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.7/socket.io.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.3/js.cookie.min.js"></script>
     <script src="/js/main.js"></script>
+    <script src="/js/settings.js"></script>
 </head>
 
 <div id="menu" style="display: none;">
     <div class="content">
         <div class="card">
-            <form class="settings" action="" autocomplete="off">
-                <div class="top">
-                    <div class="title">Settings (WIP)</div>
-                    <div class="body">
-                            <div class="group" id="name">
-                                <label for="nickname">Nickname</label>
-                                <input id="nickname" type="text"/>
-                                <div class="error name"></div>
-                            </div>
-                            <div class="group" id="hex">
-                                <label for="color">Color</label>
-                                <input id="color" type="text"/>
-                                <div class="error hex"></div>
-                            </div>
+            <form class="group settings" action="" autocomplete="off">
+                <div class="inputs">
+                    <div class="title">
+                        Settings
+                    </div>
+                    <div class="input">
+                        <label for="nickname" id="label-nickname">Nickname</label>
+                        <input type="text" id="nickname" name="nickname" maxlength="16" pattern="^[\w]{3,16}$"/>
+                        <span class="bar"></span>
+                    </div>
+                    <div class="input">
+                        <label>Color</label>
+                        <div class="colors">
+                            <input type="radio" id="red" name="color" value="F44336"/>
+                            <label for="red"><div class="color" style="background: #F44336"></div></label>
+
+                            <input type="radio" id="pink" name="color" value="E91E63"/>
+                            <label for="pink"><div class="color" style="background: #E91E63"></div></label>
+
+                            <input type="radio" id="purple" name="color" value="9C27B0"/>
+                            <label for="purple"><div class="color" style="background: #9C27B0"></div></label>
+
+                            <input type="radio" id="deep_purple" name="color" value="673AB7"/>
+                            <label for="deep_purple"><div class="color" style="background: #673AB7"></div></label>
+
+                            <input type="radio" id="indigo" name="color" value="3F51B5"/>
+                            <label for="indigo"><div class="color" style="background: #3F51B5"></div></label>
+
+                            <input type="radio" id="blue" name="color" value="2196F3" checked/>
+                            <label for="blue"><div class="color" style="background: #2196F3"></div></label>
+
+                            <input type="radio" id="light_blue" name="color" value="01579B"/>
+                            <label for="light_blue"><div class="color" style="background: #01579B"></div></label>
+
+                            <input type="radio" id="cyan" name="color" value="00838F"/>
+                            <label for="cyan"><div class="color" style="background: #00838F"></div></label>
+
+                            <input type="radio" id="teal" name="color" value="009688"/>
+                            <label for="teal"><div class="color" style="background: #009688"></div></label>
+
+                            <input type="radio" id="green" name="color" value="43A047"/>
+                            <label for="green"><div class="color" style="background: #43A047"></div></label>
+
+                            <input type="radio" id="light_green" name="color" value="689F38"/>
+                            <label for="light_green"><div class="color" style="background: #689F38"></div></label>
+
+                            <input type="radio" id="lime" name="color" value="lime"/>
+                            <label for="lime"><div class="color" style="background: #827717"></div></label>
+
+                            <input type="radio" id="orange" name="color" value="EF6C00"/>
+                            <label for="orange"><div class="color" style="background: #EF6C00"></div></label>
+
+                            <input type="radio" id="deep_orange" name="color" value="FF5722"/>
+                            <label for="deep_orange"><div class="color" style="background: #FF5722"></div></label>
+                        </div>
                     </div>
                 </div>
-                <div class="bottom">
-                    <button id="cancel">Cancel</button>
-                    <button id="save">Save</button>
+                <div class="buttons">
+                    <button>Cancel</button>
+                    <button type="submit">Save</button>
                 </div>
             </form>
         </div>
@@ -45,7 +88,7 @@
     <div class="header">
         <div class="before">
             <button id="refresh">
-                <i class="material-icons">refresh</i>
+                <a href="/"><i class="material-icons">refresh</i></a>
             </button>
         </div>
 

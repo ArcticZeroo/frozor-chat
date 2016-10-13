@@ -17,10 +17,18 @@ app.get('/chat', (req, res)=>{
     res.sendFile(`${__dirname}/assets/html/index.html`);
 });
 
+/* Set Redirect Paths From Old Website */
+
+
+
+/* End Redirect Paths */
+
+
 io.on('connection', (socket)=>{
     chat.newUser(socket);
 });
 
-http.listen(80, ()=>{
-    log.info(`Listening on port ${log.chalk.cyan('80')}!`, "HTTP")
+var port = 80;
+http.listen(port, ()=>{
+    log.info(`Listening on port ${log.chalk.cyan(port)}!`, "HTTP")
 });
