@@ -25,9 +25,9 @@ function handleMessage(message){
                 <div class="not-me inactive"></div>
                 <div class="name inactive"></div>
             </div>
-            <div class="chat-message end">
+            <div class="chat-message end" data-ts="${message.ts}" id="${message.ts}">
                 <div class="content">
-                    <div class="me message" style="background-color: ${message.color};" data-ts="${message.ts}">${message.text}</div>
+                    <div class="me message" style="background-color: ${message.color};">${message.text}</div>
                 </div>
                 <div class="name">${getUsernameString(message)}</div>
             </div>
@@ -36,9 +36,9 @@ function handleMessage(message){
     }else{
         // OTHERS' MESSAGES
         $('#messages').append(`<li class="message">
-            <div class="chat-message">
+            <div class="chat-message" data-ts="${message.ts}" id="${message.ts}">
                 <div class="content">
-                    <div class="not-me message" style="background-color: ${message.color};" data-ts="${message.ts}">${message.text}</div>
+                    <div class="not-me message" style="background-color: ${message.color};">${message.text}</div>
                 </div>
                 <div class="name">${getUsernameString(message)}</div>
             </div>
@@ -49,6 +49,11 @@ function handleMessage(message){
         </li>`)
         // OTHERS' MESSAGES END
     }
+    $(`#${message.ts}`).click(function () {
+        var timestamp  = $(this).data('ts');
+        var timeString = (new Date(timestamp).toLocaleTimeString());
+        console.log(timeString);
+    });
 }
 
 var menu_opened = false;
@@ -104,12 +109,23 @@ $(document).ready(function () {
 
     socket.on('chat', function(message){
         handleMessage(message);
+        var body = $('body');
+        var percentageScrolled = (body.scrollTop() / (body.height() - $(window).height()))*100;
+        if(percentageScrolled < 75) return;
         goToBottom();
     });
 
     socket.on('users', function(count){
         console.log(`There are ${count} users online.`);
         $('.users').html(`${count} Online`);
+    });
+
+    socket.on('info', (info)=>{
+        $('#messages').append(`<li class="info">${info}</li>`)
+    });
+
+    socket.on('game', (game)=>{
+        $('#messages').append(`<li class="game">${game}</li>`);
     });
 
     socket.on('disconnect', disconnected);

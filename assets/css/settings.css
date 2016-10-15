@@ -117,7 +117,7 @@
     display: none;
 }
 
-.card .group .input input[type="radio"] + label div{
+.card .group .input input[type="radio"] + label div, .color{
     height: 24px;
     width: 24px;
     border-radius: 100%;
@@ -140,7 +140,7 @@
     flex-wrap: wrap;
 }
 
-.colors .color{
+.color{
     margin: 4px;
 }
 

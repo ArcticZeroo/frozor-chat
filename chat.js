@@ -3,6 +3,7 @@ var RunCommand     = require('frozor-commands').RunCommand;
 var CommandMessage = require('./lib/CommandMessage');
 var Error          = require('frozor-error');
 var chatCommands   = require('./lib/commands/chat');
+var strings        = require('./config/strings.json');
 
 class ChatHandler{
     constructor(io){
@@ -59,7 +60,7 @@ class ChatHandler{
                     commandMessage.sendAutoReply(socket, `Unable to process command, please try again later.`);
                     log.error(`An error occurred while attempting to execute the command ${log.chalk.red(commandMessage.getName())}: ${e}`);
                 }
-            })
+            });
             return;
         }
 
@@ -118,6 +119,8 @@ class ChatHandler{
 
         socket.emit('history', this.getHistory());
 
+        socket.emit('info', strings.start);
+
         socket.on('cookie', (old_id)=>{
             log.debug('Someone with an old cookie conneted! Remaking their user...');
             this.createUser(socket.id);
@@ -150,18 +153,27 @@ class ChatHandler{
         });
 
         socket.on('color', (color)=>{
-            log.debug(`Received a new color event, ${color}`);
-
             var isValid = /^[#]?[0-9A-f]{6}$/.test(color);
             if(!isValid) return;
 
             color = `#${color.replace('#', '')}`;
 
+            var username = this.getUsername(socket.id) || 'Someone';
+            if(this.getMessageColor(socket.id) == color) return;
+
             this.setColor(socket.id, color);
+
+            this.io.emit('info', `${username} changed their color to <div class="color" style="background-color: ${color}"></div>`);
         });
 
         socket.on('username', (name)=>{
             if(name.length > 16) return;
+            if(!/[\w]{3,16}/.test(name)) return;
+
+            var username = this.getUsername(socket.id) || 'Someone';
+            if(name == username) return;
+            var color    = this.getMessageColor(socket.id);
+            this.io.emit('info', `${username} changed their name to <div class="new-name chat-message" style="background-color: ${color}">${name}</div>`);
 
             this.setUsername(socket.id, name);
         });

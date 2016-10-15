@@ -325,3 +325,16 @@ input:focus ~ label{
 .disconnected a{
     color: #212121;
 }
+
+.info{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(0, 0, 0, 0.35);
+}
+
+.new-name{
+    color: white;
+    border-radius: 16px 16px;
+    margin-left: 4px;
+}
