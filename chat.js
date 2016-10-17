@@ -4,6 +4,7 @@ var CommandMessage = require('./lib/CommandMessage');
 var Error          = require('frozor-error');
 var chatCommands   = require('./lib/commands/chat');
 var strings        = require('./config/strings.json');
+var SystemMessage  = require('./lib/SystemMessage');
 
 class ChatHandler{
     constructor(io){
@@ -17,9 +18,20 @@ class ChatHandler{
         return this._users[id];
     }
 
+    getID(id){
+        this.checkUser(id);
+        return this.getUser(id).id;
+    }
+
     getMessageColor(id){
         if(!this.getUser(id)) this.createUser(id);
         return this.getUser(id).color;
+    }
+
+    getConsolePrefix(data){
+        var username = data.username;
+        if(!username) username = 'Anonymous';
+        return `${username}${data.color}`;
     }
 
     newMessage(socket, data){
@@ -34,19 +46,19 @@ class ChatHandler{
                     log.command(`${commandMessage.getUsernameString()}@${commandMessage.getUser()}`, commandMessage.getText(), 'Chat', false);
                     switch(err){
                         case Error.COMMAND_UNDEFINED:
-                            commandMessage.sendAutoReply(socket, 'Unknown command. Type /help for a list of commands.');
+                            commandMessage.reply(socket, 'Unknown command. Type /help for a list of commands.');
                             break;
                         case Error.COMMAND_TOO_MANY_ARGS:
-                            commandMessage.sendAutoReply(socket, `Too many arguments! That command has a maximum of ${command.getMax()}`);
+                            commandMessage.reply(socket, `Too many arguments! That command has a maximum of ${command.getMax()}`);
                             break;
                         case Error.COMMAND_NOT_ENOUGH_ARGS:
-                            commandMessage.sendAutoReply(socket, `Not enough arguments! That command has a minimum of ${command.getMin()}`);
+                            commandMessage.reply(socket, `Not enough arguments! That command has a minimum of ${command.getMin()}`);
                             break;
                         case Error.COMMAND_DISABLED:
-                            commandMessage.sendAutoReply(socket, `That command is currently disabled.`);
+                            commandMessage.reply(socket, `That command is currently disabled.`);
                             break;
                         default:
-                            commandMessage.sendAutoReply(socket, `An unknown error has occurred. Please try again later.`);
+                            commandMessage.reply(socket, `An unknown error has occurred. Please try again later.`);
                     }
                     return;
                 }
@@ -57,17 +69,18 @@ class ChatHandler{
                     log.command(`${commandMessage.getUsernameString()}@${commandMessage.getUser()}`, commandMessage.getText(), 'Chat', true);
                     process(socket, commandMessage, this.io);
                 }catch(e){
-                    commandMessage.sendAutoReply(socket, `Unable to process command, please try again later.`);
+                    commandMessage.reply(socket, `Unable to process command, please try again later.`);
                     log.error(`An error occurred while attempting to execute the command ${log.chalk.red(commandMessage.getName())}: ${e}`);
                 }
             });
             return;
         }
 
-        this.io.emit('chat', data);
-
         if(this.getHistory().length == 100) this._history.splice(0, 1);
         this._history.push(data);
+
+        this.io.emit('chat', data);
+        log.log(log.getLogMessage(log.chalk.cyan, 'CHAT', data.text, this.getConsolePrefix(data)), false);
     }
 
     getHistory(){
@@ -80,22 +93,98 @@ class ChatHandler{
         return `#${randomColor}`;
     }
 
-    getUsername(id){
+    checkUser(id){
         if(!this.getUser(id)) this.createUser(id);
+    }
+
+    getUsername(id){
+        this.checkUser(id);
 
         return this.getUser(id).username;
     }
 
     setUsername(id, name){
-        if(!this.getUser(id)) this.createUser(id);
+        this.checkUser(id);
 
         this._users[id].username = name;
     }
 
-    setColor(id, color){
-        if(!this.getUser(id)) this.createUser(id);
+    usernameExists(name){
+        for(var id in this._users){
+            if(name && name == this.getUsername(id)) return id;
+        }
+        return false;
+    }
 
+    getTimeConnected(id){
+        this.checkUser(id);
+
+        return this.getUser(id).connected;
+    }
+
+    getLastOnline(id){
+        this.checkUser(id);
+
+        return this.getUser(id).last_on;
+    }
+
+    isOnline(id){
+        this.checkUser(id);
+
+        return this.getUser(id).online;
+    }
+
+    setColor(id, color){
+        this.checkUser(id);
+
+        //log.debug(`Setting color to ${color}`);
+        //log.debug(`Current color: ${this.getMessageColor(id)}`);
         this._users[id].color = color;
+        //log.debug(`Set color! New color: ${this.getMessageColor(id)}`);
+    }
+
+    setOnlineStatus(id, status){
+        this.checkUser(id);
+
+        this._users[id].online = status;
+    }
+
+    setLastOnline(id, time){
+        this.checkUser(id);
+
+        this._users[id].last_on = time;
+    }
+
+    setID(current_id, new_id){
+        this.checkUser(current_id);
+
+        this._users[current_id].id = new_id;
+    }
+
+    getNotices(id){
+        this.checkUser(id);
+
+        return this.getUser(id).notices;
+    }
+
+    addNotice(id, notice){
+        this.checkUser(id);
+
+        this._users[id].notices.push(notice);
+    }
+
+    checkNotices(socket){
+        var notices      = this.getNotices(socket.id);
+        var noticeString = (notices.length == 1) ? `notice` : `notices`;
+        var notices_to_send = ``;
+
+        for(var item of notices){
+            notices_to_send += `\n${item}`;
+        }
+
+        if(notices.length > 0){
+            socket.emit('info', `${strings.notices.start}<b> ${notices.length} </b>${noticeString} ${strings.notices.end}:${notices_to_send}`);
+        }
     }
 
     createUser(id){
@@ -103,7 +192,10 @@ class ChatHandler{
             id       : id,
             username : null,
             color    : this.getRandomColor(),
-            connected: Date.now()
+            connected: Date.now(),
+            online   : true,
+            last_on  : Date.now(),
+            notices  : []
         };
     }
 
@@ -113,7 +205,9 @@ class ChatHandler{
         this._connected++;
         this.io.emit('users', this._connected);
 
-        log.info(`A user connected to the socket! There are now ${log.chalk.cyan(this._connected)} users connected.`, "SOCKET");
+        var ip = socket.request.connection.remoteAddress;
+
+        log.info(`A user connected to the socket with IP ${log.chalk.red(ip)}! There are now ${log.chalk.cyan(this._connected)} users connected.`, "SOCKET");
 
         socket.emit('user', socket.id);
 
@@ -121,12 +215,11 @@ class ChatHandler{
 
         socket.emit('info', strings.start);
 
+        this.checkNotices(socket);
+
         socket.on('cookie', (old_id)=>{
-            log.debug('Someone with an old cookie conneted! Remaking their user...');
-            this.createUser(socket.id);
-            this._users[socket.id].id = old_id;
-            this.setUsername(socket.id, this.getUsername(old_id));
-            this.setColor(socket.id, this.getMessageColor(old_id));
+            socket.id = old_id;
+            this.checkNotices(socket);
         });
 
         socket.on('chat', (message)=>{
@@ -143,13 +236,15 @@ class ChatHandler{
                 message.text = message.text.replace(links[0], `<a href="${links[0]}" target="_blank">${links[0]}</a>`);
             }
 
-            log.info(message.text, `MESSAGE`);
             this.newMessage(socket, message);
         });
 
         socket.on('disconnect', ()=>{
             this._connected--;
             this.io.emit('users', this._connected);
+
+            this.setOnlineStatus(socket.id, false);
+            this.setLastOnline(socket.id, Date.now());
         });
 
         socket.on('color', (color)=>{
@@ -167,11 +262,32 @@ class ChatHandler{
         });
 
         socket.on('username', (name)=>{
-            if(name.length > 16) return;
-            if(!/[\w]{3,16}/.test(name)) return;
+            if(name.length > 16 || !/^[\w]{3,16}([ ]?🐧)?$/.test(name)) return;
 
             var username = this.getUsername(socket.id) || 'Someone';
             if(name == username) return;
+
+            var exists = this.usernameExists(name);
+            if(exists){
+                log.debug('Exists!');
+                if(exists != socket.id){
+                    if(!this.isOnline(exists)){
+                        var last_online = this.getLastOnline(exists);
+                        if(Date.now() - last_online < 60*60*1000){
+                            socket.emit('chat', new SystemMessage(`${strings.name_in_use.offline}${strings.name_in_use.tryagain}`).toJSON());
+                            return;
+                        }else{
+                            this.setUsername(exists, null);
+                            this.addNotice(exists, `Your username was reset because someone tried claimed it after you were offline for over an hour.`);
+                        }
+                    }else{
+                        //log.debug(JSON.stringify(new SystemMessage(`${strings.name_in_use.online}${strings.name_in_use.tryagain}`).toJSON()));
+                        socket.emit('chat', new SystemMessage(`${strings.name_in_use.online}${strings.name_in_use.tryagain}`).toJSON());
+                        return;
+                    }
+                }
+            }
+
             var color    = this.getMessageColor(socket.id);
             this.io.emit('info', `${username} changed their name to <div class="new-name chat-message" style="background-color: ${color}">${name}</div>`);
 

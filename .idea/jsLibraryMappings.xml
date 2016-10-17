@@ -2,6 +2,7 @@
 <project version="4">
   <component name="JavaScriptLibraryMappings">
     <file url="file://$PROJECT_DIR$" libraries="{Node.js Core, chat/node_modules}" />
+    <file url="file://$PROJECT_DIR$/assets/js/main.js" libraries="{jquery, js.cookie, loader, socket.io}" />
     <includedPredefinedLibrary name="ECMAScript 6" />
   </component>
 </project>

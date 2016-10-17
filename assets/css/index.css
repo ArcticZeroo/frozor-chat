@@ -47,8 +47,8 @@ button:focus{
 #message-box{
     height: 100%;
     overflow: hidden;
-    padding-bottom: 48px;
-    padding-top: 48px;
+    padding-bottom: 64px;
+    padding-top: 64px;
 }
 
 #messages {
@@ -129,6 +129,8 @@ i.material-icons{
 
 .chat-message .content .message{
     border-radius: 16px 16px;
+    max-width: 500px;
+    overflow-wrap: break-word;
 }
 
 .chat-message.end{
@@ -338,3 +340,164 @@ input:focus ~ label{
     border-radius: 16px 16px;
     margin-left: 4px;
 }
+
+.time{
+    margin-top: 1px;
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 12px;
+    display: none;
+}
+
+/* SETTINGS */
+
+.card input[type="text"]{
+    display: block;
+    background: none;
+    border: none;
+    border-bottom: 1px solid #B6B6B6;
+    margin-bottom: 16px;
+}
+.card input[type="submit"]{
+    background: none;
+    text-transform: uppercase;
+    outline: none;
+    border: none;
+    font-weight: bold;
+    min-width: 88px;
+    height: 36px;
+    border-radius: 2px;
+}
+.card input:focus{
+    outline: none;
+}
+.card label{
+    color: #212121;
+    font-size: 12px;
+}
+
+.card{
+    min-width: 280px;
+    width: 280px;
+    background-color: #FAFAFA;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.24);
+    -webkit-user-select: none; /* Chrome/Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+ */
+
+    /* Rules below not implemented in browsers yet */
+    -o-user-select: none;
+}
+
+.card .group .title{
+    padding-bottom: 4px;
+    font-size: 20px;
+    color: #212121;
+}
+
+.card .group .inputs{
+    width: calc(100% - 48px);
+    padding: 24px 24px 24px 24px;
+}
+.card .group .input{
+    padding-top: 16px;
+    height: calc(72px - 16px);
+}
+.card .group .input label{
+    padding-bottom: 4px;
+    color: #999;
+}
+.card .group .input input[type="text"]{
+    padding-top: 4px;
+    height: 8px;
+    padding-bottom: 8px;
+    width: 100%;
+}
+.card .group .buttons{
+    height: 52px;
+    display: flex;
+    justify-content: flex-end;
+}
+/*.card .group .buttons input[type="submit"], .card .group .buttons button[type="button"]{
+    padding-top: 8px;
+    padding-bottom: 8px;
+    height: 36px;
+    color: #2196F3;
+    padding-right: 8px;
+    padding-left: 0px;
+    float: right;
+    cursor: pointer;
+}*/
+
+.card .group .buttons button:disabled{
+    color: rgba(0,0,0,0.26);
+}
+
+.bar{
+    position: relative;
+    display: block;
+    width: 0;
+    height: 2px;
+    background: #2196F3;
+    transition: 0.2s ease all;
+    margin: 0 auto;
+    transform: translateY(-17px);
+}
+
+.card .bar-red{
+    background: #F44336;
+}
+
+.card input:focus ~ .bar{
+    width: 100%;
+}
+.card .group .inputs .input label.input-selected{
+    color: #2196F3;
+}
+
+.card button{
+    text-transform: uppercase;
+    color: #2196F3;
+    min-width: 64px;
+    padding-right: 8px;
+    font-family:Roboto;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.card .group .input input[type="radio"]{
+    opacity: 0;
+    display: none;
+}
+
+.card .group .input input[type="radio"] + label div, .color{
+    height: 24px;
+    width: 24px;
+    border-radius: 100%;
+    -webkit-box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.25);
+    -moz-box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.25);
+    box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.25);
+    transition-property: all;
+    transition-duration: 0.25s;
+}
+
+.card .group .input input[type="radio"]:checked + label div{
+    -webkit-box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.5);
+    -moz-box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.5);
+    box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.5);
+}
+
+.colors{
+    padding-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.color{
+    margin: 4px;
+}
+
+.card .input:last-child{
+    padding-bottom: 30px;
+}
+
+/* END SETTINGS */

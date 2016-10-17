@@ -17,6 +17,10 @@ function getUsernameString(message){
     return (message.username) ? message.username : '';
 }
 
+function clearMessageBox(){
+    $('#messages').empty();
+}
+
 function handleMessage(message){
     if(message.user == user){
         // OWN MESSAGES
@@ -29,6 +33,7 @@ function handleMessage(message){
                 <div class="content">
                     <div class="me message" style="background-color: ${message.color};">${message.text}</div>
                 </div>
+                <div class="time" id="time-${message.ts}">${new Date(message.ts).toLocaleTimeString()}</div>
                 <div class="name">${getUsernameString(message)}</div>
             </div>
         </li>`);
@@ -40,6 +45,7 @@ function handleMessage(message){
                 <div class="content">
                     <div class="not-me message" style="background-color: ${message.color};">${message.text}</div>
                 </div>
+                <div class="time" id="time-${message.ts}">${new Date(message.ts).toLocaleTimeString()}</div>
                 <div class="name">${getUsernameString(message)}</div>
             </div>
             <div class="chat-message">
@@ -51,8 +57,9 @@ function handleMessage(message){
     }
     $(`#${message.ts}`).click(function () {
         var timestamp  = $(this).data('ts');
-        var timeString = (new Date(timestamp).toLocaleTimeString());
-        console.log(timeString);
+        var selector   = `#time-${timestamp}`;
+        $(selector).fadeToggle('fast');
+        //console.log('clicked!');
     });
 }
 
@@ -70,6 +77,10 @@ function closeMenu(){
     menu_opened = false;
 }
 
+function clearNickname(){
+    $('#nickname').val('');
+}
+
 function toggleMenu(){
     if(menu_opened) closeMenu();
     else            openMenu();
@@ -84,13 +95,13 @@ $(document).ready(function () {
         connected();
         var userCookie = Cookies.get('user');
         if(userCookie){
-            console.log('Emitting cookie');
+            //console.log('Emitting cookie');
             user = userCookie;
             socket.emit('cookie', userCookie);
             return;
         }
 
-        console.log(`My user ID is ${id}`);
+        //console.log(`My user ID is ${id}`);
         user = id;
         Cookies.set('user', id);
     });
@@ -109,29 +120,35 @@ $(document).ready(function () {
 
     socket.on('chat', function(message){
         handleMessage(message);
-        var body = $('body');
-        var percentageScrolled = (body.scrollTop() / (body.height() - $(window).height()))*100;
-        if(percentageScrolled < 75) return;
+        var body     = $('body');
+        var jQwindow = $(window);
+        var percentageScrolled = (body.scrollTop() / (body.height() - jQwindow.height()))*100;
+        if(percentageScrolled < 85 && body.scrollTop() < 650 && $(document).height() > jQwindow.height()+100) return;
         goToBottom();
     });
 
     socket.on('users', function(count){
-        console.log(`There are ${count} users online.`);
+        //console.log(`There are ${count} users online.`);
         $('.users').html(`${count} Online`);
     });
 
     socket.on('info', (info)=>{
-        $('#messages').append(`<li class="info">${info}</li>`)
+        $('#messages').append(`<li class="info">${info}</li>`);
     });
 
     socket.on('game', (game)=>{
         $('#messages').append(`<li class="game">${game}</li>`);
     });
 
+    socket.on('clear', ()=>{
+        clearMessageBox();
+    });
+
     socket.on('disconnect', disconnected);
 
     $('#cancel').click(function () {
         closeMenu();
+        clearNickname();
     });
 
     $('#settings').click(function(){
@@ -151,12 +168,12 @@ $(document).ready(function () {
                 $('.error.name').html('Too long. Maximum 16 characters.');
                 return;
             }
-            console.log('Emitting name change!');
+            //console.log('Emitting name change!');
             socket.emit('username', nickname.val());
-            nickname.val('');
+            clearNickname();
         }
 
-        console.log('Emitting color change!');
+        //console.log('Emitting color change!');
         socket.emit('color', color.val());
 
         closeMenu();
@@ -177,4 +194,4 @@ $(document).ready(function () {
         chat.val(' ');
         goToBottom();
     });
-})
+});

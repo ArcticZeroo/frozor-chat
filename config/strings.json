@@ -1,3 +1,12 @@
 {
-  "start": "Welcome to Frozor Chat! Type /help for a list of commands, and /info for info."
+  "start": "Welcome to Frozor Chat! Type /help for a list of commands, and /info for info.",
+  "name_in_use": {
+    "online": "That name is already in use by an online user.",
+    "offline": "That name is already in use by a user who has been online within the past 60 minutes.",
+    "tryagain": "<br>Please choose another."
+  },
+  "notices": {
+    "start": "You received",
+    "end"  : "while offline:"
+  }
 }
